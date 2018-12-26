@@ -3,6 +3,7 @@
 
 import smtplib, ssl
 import pandas as pd
+import datetime as dt
 from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
@@ -30,7 +31,7 @@ def send_email():
     # How are you?
     # Real Python has many great tutorials:
     # www.realpython.com'''
-    html_file = open('./html/sample.html','rt')
+    html_file = open('./html/1.html','rt')
     html='''\
     '''
     for line in html_file:
@@ -45,13 +46,39 @@ def send_email():
     # message.attach(part1)
     message.attach(part2)
 
+    with open('./img/1.jpg','rb') as attachment:
+        part = MIMEBase('application','octet-stream')
+        part.set_payload(attachment.read())
+    encoders.encode_base64(part)
+    message.attach(part)
+
+
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, message.as_string())
 
+def check_dates(given_date):
+    now = dt.datetime.now()
+    if now.month == given_date.month and now.day == given_date.day:
+        return True
+    else:
+        return False
+
 def open_data():
     data = pd.read_excel('./sample_data.xlsx')
     return data
+
+def filter_data(data):
+    list = []
+    i = 0
+    while i < data['Baptism-Date'].count():
+        if check_dates(data['Baptism-Date'][i]):
+            list.append(True)
+        else:
+            list.append(False)
+        i += 1
+    print(list)
+    return pd.Series(list)
 
 if __name__ == "__main__": main()
