@@ -2,8 +2,13 @@
 # to any specified email
 
 import smtplib, ssl
+import pandas as pd
 
 def main():
+    data = open_data()
+    print(data.info())
+    
+def send_email():
     port = 465  # For SSL
     smtp_server = "smtp.gmail.com"
     sender_email = "alfredmathew718@gmail.com"  # Enter your address
@@ -18,5 +23,9 @@ def main():
     with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, message)
+
+def open_data():
+    data = pd.read_excel('sample_data.xlsx')
+    return data
 
 if __name__ == "__main__": main()
