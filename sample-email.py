@@ -1,4 +1,4 @@
-import smtplib
+from smtplib import SMTP
 SERVER = "localhost"
 
 FROM = 'monty@python.com'
@@ -20,7 +20,7 @@ Subject: %s
 """ % (FROM, ", ".join(TO), SUBJECT, TEXT)
 
 # Send the mail
-
-server = smtplib.SMTP('localhost')
-server.sendmail(FROM, TO, message)
-server.quit()
+with SMTP() as server:
+    server.connect(host='localhost')
+    server.sendmail(FROM, TO, message)
+    server.quit()

@@ -6,6 +6,7 @@ import pandas as pd
 import getpass as gp
 import numpy as np
 import socket
+import keyring as kr
 import datetime as dt
 from random import randint
 from PIL import Image, ImageDraw, ImageFont
@@ -28,7 +29,7 @@ def send_email(first_name, last_name):
     message['To'] = receiver_email
 
     # use getpass module here
-    password = gp.getpass(prompt="Type your password and press enter: ")
+    password = kr.get_password('gmail','alfredmathew718')
 
     # Create the plain-text and HTML version of your message
     # text = '''\
@@ -75,6 +76,8 @@ def send_email(first_name, last_name):
     with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, message.as_string())
+        server.quit()
+    print('Message Successfully Sent!')
 
 def process_person(data):
     length = len(data.index)
