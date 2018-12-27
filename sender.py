@@ -3,27 +3,32 @@
 
 import smtplib, ssl
 import pandas as pd
+import getpass as gp
+import numpy as np
+import socket
 import datetime as dt
+from random import randint
+from PIL import Image, ImageDraw, ImageFont
 from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
-def main():
-    send_email()
     
-def send_email():
+def main(): 
+    send_email('Alfred','Mathew')
+
+def send_email(first_name, last_name):
     port = 465  # For SSL
     sender_email = "alfredmathew718@gmail.com"
     receiver_email = "alfredmathew@outlook.com"  # Enter receiver address
     smtp_server = "smtp.gmail.com"
     message = MIMEMultipart()
-    message['Subject'] = 'Multipart Test'
+    message['Subject'] = 'Baptism Anniversary - STM Charismatic Group'
     message['From'] = sender_email  # Enter your address
     message['To'] = receiver_email
 
     # use getpass module here
-    password = input("Type your password and press enter: ")
+    password = gp.getpass(prompt="Type your password and press enter: ")
 
     # Create the plain-text and HTML version of your message
     # text = '''\
@@ -46,17 +51,41 @@ def send_email():
     # message.attach(part1)
     message.attach(part2)
 
-    with open('./img/1.jpg','rb') as attachment:
+    edit_image(1,first_name,last_name)
+
+    with open('./img/new/sample-out.jpg','rb') as attachment:
         part = MIMEBase('application','octet-stream')
         part.set_payload(attachment.read())
     encoders.encode_base64(part)
+
+    part.add_header(
+        "Content-Disposition",
+        "attachment; filename = BaptismAnniversary.jpg",
+    )
+
     message.attach(part)
-
-
+  
+    # with smtplib.SMTP(socket.gethostname(), port=465) as server:
+    #      server.sendmail(sender_email, receiver_email, message.as_string())
+    # smtpObj = smtplib.SMTP(host='192.168.86.95',port=465)
+    # smtpObj.sendmail(sender_email, receiver_email, message.as_string())         
+    # print("Successfully sent email")
+    
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, message.as_string())
+
+def process_person(data):
+    length = len(data.index)
+    i=0
+    first_name = ''
+    last_name = ''
+    while i < length:
+        first_name = data.iloc[i]['Baptized-Firstname']
+        last_name = data.iloc[i]['Batpized-Lastname']
+        send_email(first_name,last_name)
+        i+=1
 
 def check_dates(given_date):
     now = dt.datetime.now()
@@ -73,12 +102,22 @@ def filter_data(data):
     list = []
     i = 0
     while i < data['Baptism-Date'].count():
-        if check_dates(data['Baptism-Date'][i]):
+        if data['Baptism-Date'][i] == np.NaN:
+            list.append(False)
+        elif check_dates(data['Baptism-Date'][i]):
             list.append(True)
         else:
             list.append(False)
         i += 1
-    print(list)
     return pd.Series(list)
+
+def edit_image(imgno,first_name,last_name):
+    img = Image.open(f'./img/{imgno}.jpg')
+    draw = ImageDraw.Draw(img)
+    # font = ImageFont.truetype(<font-file>, <font-size>)
+    font = ImageFont.truetype('/Library/Fonts/Arial.ttf', 30)
+    # draw.text((x, y),"Sample Text",(r,g,b))
+    draw.text((200, 50),f"{first_name} {last_name}",(39,40,48),font=font)
+    img.save('./img/new/sample-out.jpg')
 
 if __name__ == "__main__": main()
