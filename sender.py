@@ -16,11 +16,11 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
     
 def main(): 
-    send_email('Alfred','Mathew')
+    send_email('Jessica','Mathew')
 
 def send_email(first_name, last_name):
     port = 465  # For SSL
-    sender_email = "alfredmathew718@gmail.com"
+    sender_email = "lifeinchrist.stm@gmail.com"
     receiver_email = "alfredmathew@outlook.com"  # Enter receiver address
     smtp_server = "smtp.gmail.com"
     message = MIMEMultipart()
@@ -29,7 +29,7 @@ def send_email(first_name, last_name):
     message['To'] = receiver_email
 
     # use getpass module here
-    password = kr.get_password('gmail','alfredmathew718')
+    password = kr.get_password('gmail','lic.stm')
 
     # Create the plain-text and HTML version of your message
     # text = '''\
@@ -115,7 +115,7 @@ def filter_data(data):
     return pd.Series(list)
 
 def edit_image(imgno,first_name,last_name):
-    img = Image.open(f'./img/{imgno}.jpg')
+    img = Image.open(f'./img/resources/{imgno}.jpg')
     draw = ImageDraw.Draw(img)
     # font = ImageFont.truetype(<font-file>, <font-size>)
     font = ImageFont.truetype('/Library/Fonts/Arial.ttf', 30)
