@@ -16,13 +16,15 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
     
 def main(): 
-    data = open_data()
-    process_person(data)
+    send_email(
+        child = 'Alfred Mathew',
+        dad = ['Mathew Sebastian','sebastianmatt@gmail.com']
+    )
 
 def send_email(**kwargs):
     port = 465  # For SSL
     sender_email = "lifeinchrist.stm@gmail.com"
-    receiver_email = "alfredmathew@outlook.com"  # Enter receiver address
+    receiver_email = "alfredmathew718@gmail.com"  # Enter receiver address
     smtp_server = "smtp.gmail.com"
     message = MIMEMultipart()
     message['Subject'] = 'Baptism Anniversary - STM Charismatic Group'
@@ -36,97 +38,129 @@ def send_email(**kwargs):
     # text = '''\
     # '''
     # html_file = open('./html/1.html','rt')
-    first_name = kwargs['first_name']
-    last_name = kwargs['last_name']
-    html='''\
-    <html>
-    <head>
-        <title>Introduction to HTML</title>
-        <style>
-                header {
-                    width: 100%;
-                    height: 20%;
-                }
-                h1 {
-                    font-size: 20pt ;
-                }
-                body {
-                    background-color: beige;
-                }
-        </style>
-    </head>\n''' 
-    html += f'''
-    <body>
-        <header>
-            <h1>
-                Greetings from the Charismatic prayer group!
-            </h1>
-        </header>
-        <p>
-            We would like to wish your child {first_name} {last_name} a happy baptism anniversary!
-        </p>
-        <p>
-            We meet on the 2nd and 4th Thursdays of every month.
-        </p>
-    </body>
-    </html>
-    '''
-    # for line in html_file:
-    #     html+=f'{line}\n'
-    # html_file.close()
+    
 
-    # Turn these into plain/html MIMEText objects
-    # part1 = MIMEText(text, "plain")
-    part2 = MIMEText(html, "html")
-
-    # Add HTML/plain-text parts to MIMEMultipart message
-    # The email client will try to render the last part first
-    # message.attach(part1)
-    message.attach(part2)
-
-    imgno = randint(1,4)
+    imgno = 5 #randint(1,4)
     # edit_image(imgno,first_name,last_name)
     with open(f'./img/resources/{imgno}.jpg','rb') as attachment:
         part = MIMEBase('application','octet-stream')
         part.set_payload(attachment.read())
     encoders.encode_base64(part)
+    # part.add_header(
+    #     "Content-Disposition",
+    #     "attachment; filename = BaptismAnniversary.jpg",
+    # )
     part.add_header(
-        "Content-Disposition",
-        "attachment; filename = BaptismAnniversary.jpg",
+        'Content-ID',
+        '<image1>'
     )
     message.attach(part)
     
     for k in kwargs:
-        if k == 'first_name' or k == 'last_name':
+        if k == 'child':
             continue
         else:
+            html='''\
+            <html>
+            <head>
+                <title>Charismatic Group Wishes</title>
+                <style>
+                        header {
+                            width: 100%;
+                            height: 20%;
+                        }
+                        p {
+                            font-family: 'Times New Roman', Times, serif; 
+                            font-size: 14pt;
+                        }
+                        h1 {
+                            font-size: 20pt ;
+                        }
+                        footer {
+                            width: 100%;
+                        }
+                </style>
+            </head>\n''' 
+            html += f'''
+            <body>
+                <header>
+                    <h1>
+                        Greetings from the STM Charismatic Prayer Group!
+                    </h1>
+                </header>
+                <article>
+                    <p>
+                        Dear {kwargs[k][0]},
+                    </p>
+                    <p>
+                        We would like to wish your child {kwargs['child']} a happy baptism anniversary!
+                    </p>
+                    <img src="cid:image1">
+                    <p>
+                        We strive to deepen the prayer lives of participants and their dependence<br>
+                        on the Holy Spirit in all aspects of their daily life. We hope to broaden<br>
+                        participants' knowledge of and openness to the gifts, fruits, charisms, <br>
+                        and manifestations of the Holy Spirit.
+                    </p>
+                    <p>
+                        We meet on the 2nd and 4th Tuesdays of every month.
+                    </p>
+                </article>
+                <footer>
+                    <section>
+                        <address>
+                            <p>
+                                Contact Matt Sebastian:
+                                <ul>
+                                    <li>+1.919.519.2490</li>
+                                    <li>sebastianmatt@gmail.com</li>
+                                </ul>
+                            </p>
+                        </address>
+                    </section>
+                    <section>
+                        <address>
+                            <p>
+                                <a href="https://stmchapelhill.org/charismatic-prayer-group">Here is some more info about us!</a>
+                            </p>
+                        </address>
+                    </section>
+                </footer>
+            </body>
+            </html>
+            '''
+            # for line in html_file:
+            #     html+=f'{line}\n'
+            # html_file.close()
+
+            # Turn these into plain/html MIMEText objects
+            # part1 = MIMEText(text, "plain")
+            part2 = MIMEText(html, "html")
+
+            # Add HTML/plain-text parts to MIMEMultipart message
+            # The email client will try to render the last part first
+            # message.attach(part1)
+            message.attach(part2)
             context = ssl.create_default_context()
             with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
                 server.login(sender_email, password)
-                # receiver_email = kwargs[k]
+                # receiver_email = kwargs[k][1]
                 server.sendmail(sender_email, receiver_email, message.as_string())
                 server.quit()
-    print(f'Message Sent to family of {first_name} {last_name}!')
+            print('Message Sent to family of {}!'.format(kwargs['child']),flush=True)
+            break
 
 def process_person(data):
     length = len(data.index)
     i=0
-    first_name = ''
-    last_name = ''
     while i < length:
-        first_name = data.iloc[i]['Baptized-Firstname']
-        last_name = data.iloc[i]['Batpized-Lastname']
-        mom_email = data.iloc[i]['Mother-Email']
-        dad_email = data.iloc[i]['Father-Email']
-        gmom_email = data.iloc[i]['Godmother-Email']
-        gdad_email = data.iloc[i]['Godfather-Email']
+        person = data.iloc[i]
         send_email(
-        first_name = first_name,
-        last_name = last_name,
-        mom_email = mom_email,
-        dad_email = dad_email,
-        gmom_email = gmom_email,
-        gdad_email = gdad_email
+            child = ' '.join([person['Baptized-Firstname'],person['Batpized-Lastname']]),
+            dad = [' '.join([person['Father-Firstname'],person['Father-Lastname']]),person['Father-Email']],
+            mom = [' '.join([person['Mother-Firstname'],person['Mother-Lastname']]),person['Mother-Email']],
+            gmom = [' '.join([person['Godmother-Firstname'],person['Godmother-Lastname']]),person['Godmother-Email']],
+            gdad = [' '.join([person['Godfather-Firstname'],person['Godfather-Lastname']]),person['Godfather-Email']]
         )
         i+=1
 
