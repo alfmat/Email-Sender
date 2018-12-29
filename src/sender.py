@@ -17,8 +17,8 @@ from email.mime.text import MIMEText
     
 def main(): 
     send_email(
-        child = 'Alfred Mathew',
-        dad = ['Mathew Sebastian','sebastianmatt@gmail.com']
+        child = 'John Sullivan',
+        dad = ['Max Sullivan','sample@gmail.com']
     )
 
 def send_email(**kwargs):
@@ -42,7 +42,7 @@ def send_email(**kwargs):
 
     imgno = 5 #randint(1,4)
     # edit_image(imgno,first_name,last_name)
-    with open(f'./img/resources/{imgno}.png','rb') as attachment:
+    with open(f'../img/resources/{imgno}.png','rb') as attachment:
         part = MIMEBase('application','octet-stream')
         part.set_payload(attachment.read())
     encoders.encode_base64(part)
@@ -176,7 +176,7 @@ def check_dates(given_date):
         return False
 
 def open_data():
-    data = pd.read_excel('./sample_data.xlsx')
+    data = pd.read_excel('../data/sample_data.xlsx')
     return data
 
 def filter_data(data):
@@ -193,12 +193,12 @@ def filter_data(data):
     return pd.Series(list)
 
 def edit_image(imgno,first_name,last_name):
-    img = Image.open(f'./img/resources/{imgno}.jpg')
+    img = Image.open(f'../img/resources/{imgno}.png')
     draw = ImageDraw.Draw(img)
     # font = ImageFont.truetype(<font-file>, <font-size>)
     font = ImageFont.truetype('/Library/Fonts/Arial.ttf', 30)
     # draw.text((x, y),"Sample Text",(r,g,b))
     draw.text((200, 50),f"{first_name} {last_name}",(39,40,48),font=font)
-    img.save('./img/new/sample-out.png')
+    img.save('../img/new/sample-out.png')
 
 if __name__ == "__main__": main()
