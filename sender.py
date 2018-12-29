@@ -42,7 +42,7 @@ def send_email(**kwargs):
 
     imgno = 5 #randint(1,4)
     # edit_image(imgno,first_name,last_name)
-    with open(f'./img/resources/{imgno}.jpg','rb') as attachment:
+    with open(f'./img/resources/{imgno}.png','rb') as attachment:
         part = MIMEBase('application','octet-stream')
         part.set_payload(attachment.read())
     encoders.encode_base64(part)
@@ -73,6 +73,10 @@ def send_email(**kwargs):
                             font-family: 'Times New Roman', Times, serif; 
                             font-size: 14pt;
                         }
+                        #chpic {
+                            height: 450pt;
+                            width: 500pt;
+                        }
                         h1 {
                             font-size: 20pt ;
                         }
@@ -95,7 +99,7 @@ def send_email(**kwargs):
                     <p>
                         We would like to wish your child {kwargs['child']} a happy baptism anniversary!
                     </p>
-                    <img src="cid:image1">
+                    <img id="chpic" src="cid:image1">
                     <p>
                         We strive to deepen the prayer lives of participants and their dependence<br>
                         on the Holy Spirit in all aspects of their daily life. We hope to broaden<br>
