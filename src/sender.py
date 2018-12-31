@@ -17,6 +17,7 @@ from email.mime.text import MIMEText
     
 def main(): 
     data = open_data()
+    # data = data[filter_data(data)]
     process_person(data)
 
 def send_email(**kwargs):
@@ -158,11 +159,14 @@ def send_email(**kwargs):
             # Add HTML/plain-text parts to MIMEMultipart message
             # The email client will try to render the last part first
             # message.attach(part1)
+            if receiver_email == np.nan:
+                break
+            else:
+                receiver_email = kwargs[k][1]
             message.attach(part2)
             context = ssl.create_default_context()
             with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
                 server.login(sender_email, password)
-                receiver_email = kwargs[k][1]
                 message['To'] = receiver_email
                 server.sendmail(sender_email, receiver_email, message.as_string())
                 server.quit()
@@ -192,6 +196,7 @@ def check_dates(given_date):
 
 def open_data():
     data = pd.read_excel('../data/sample_data.xlsx')
+    data.dropna(thresh=13)
     return data
 
 def filter_data(data):
@@ -207,13 +212,13 @@ def filter_data(data):
         i += 1
     return pd.Series(list)
 
-def edit_image(imgno,first_name,last_name):
-    img = Image.open(f'../img/resources/{imgno}.png')
-    draw = ImageDraw.Draw(img)
-    # font = ImageFont.truetype(<font-file>, <font-size>)
-    font = ImageFont.truetype('/Library/Fonts/Arial.ttf', 30)
-    # draw.text((x, y),"Sample Text",(r,g,b))
-    draw.text((200, 50),f"{first_name} {last_name}",(39,40,48),font=font)
-    img.save('../img/new/sample-out.png')
+# def edit_image(imgno,first_name,last_name):
+#     img = Image.open(f'../img/resources/{imgno}.png')
+#     draw = ImageDraw.Draw(img)
+#     # font = ImageFont.truetype(<font-file>, <font-size>)
+#     font = ImageFont.truetype('/Library/Fonts/Arial.ttf', 30)
+#     # draw.text((x, y),"Sample Text",(r,g,b))
+#     draw.text((200, 50),f"{first_name} {last_name}",(39,40,48),font=font)
+#     img.save('../img/new/sample-out.png')
 
 if __name__ == "__main__": main()
