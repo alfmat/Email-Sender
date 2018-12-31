@@ -9,27 +9,25 @@ import numpy as np
 import keyring as kr
 import datetime as dt
 from random import randint
-from PIL import Image, ImageDraw, ImageFont
+#from PIL import Image, ImageDraw, ImageFont
 from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
     
 def main(): 
-    send_email(
-        child = 'John Sullivan',
-        dad = ['Max Sullivan','sample@gmail.com']
-    )
+    data = open_data()
+    process_person(data)
 
 def send_email(**kwargs):
     port = 465  # For SSL
     sender_email = "lifeinchrist.stm@gmail.com"
-    receiver_email = "alfredmathew718@gmail.com"  # Enter receiver address
+    # receiver_email = "alfredmathew718@gmail.com"
     smtp_server = "smtp.gmail.com"
     message = MIMEMultipart()
     message['Subject'] = 'Baptism Anniversary - STM Charismatic Group'
     message['From'] = sender_email  # Enter your address
-    message['To'] = receiver_email
+
 
     # use getpass module here or keyring module
     password = kr.get_password('gmail','lic.stm')
@@ -94,17 +92,33 @@ def send_email(**kwargs):
                 </header>
                 <article>
                     <p>
+                        <header>
+                        <h2>
                         Dear {kwargs[k][0]},
+                        </h2>
+                        </header>
                     </p>
                     <p>
+                        <header>
+                        <h3>
                         We would like to wish your child {kwargs['child']} a happy baptism anniversary!
+                        </h3>
+                        </header>
                     </p>
                     <img id="chpic" src="cid:image1">
                     <p>
+                    <br>
+                    <br>
+                    <br>
+                    <h2>
+                    ABOUT Life in Christ Charismatic Prayer Group </h2>
+                    ............................................................................<br>
+                    <h3>
                         We strive to deepen the prayer lives of participants and their dependence<br>
                         on the Holy Spirit in all aspects of their daily life. We hope to broaden<br>
                         participants' knowledge of and openness to the gifts, fruits, charisms, <br>
                         and manifestations of the Holy Spirit.
+                    </h3>
                     </p>
                     <p>
                         We meet on the 2nd and 4th Tuesdays of every month.
@@ -140,7 +154,7 @@ def send_email(**kwargs):
             # Turn these into plain/html MIMEText objects
             # part1 = MIMEText(text, "plain")
             part2 = MIMEText(html, "html")
-
+            
             # Add HTML/plain-text parts to MIMEMultipart message
             # The email client will try to render the last part first
             # message.attach(part1)
@@ -148,7 +162,8 @@ def send_email(**kwargs):
             context = ssl.create_default_context()
             with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
                 server.login(sender_email, password)
-                # receiver_email = kwargs[k][1]
+                receiver_email = kwargs[k][1]
+                message['To'] = receiver_email
                 server.sendmail(sender_email, receiver_email, message.as_string())
                 server.quit()
             print('Message Sent to family of {}!'.format(kwargs['child']),flush=True)
