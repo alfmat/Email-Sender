@@ -21,6 +21,19 @@ def main():
     process_person(data)
 
 def send_email(**kwargs):
+    """send_email(**kwargs) --> this is the function that sends out emails
+
+    Key word arguments:
+    child -- requires a string that contains the child's name (no default)
+    dad -- requires a list with dad's name and email address
+    mom -- requires a list with mom's name and email address
+    gmom -- requires a list with grandmother's name and email address
+    gdad -- requires a list with grandfather's name and email address
+
+    Outcomes:
+    * Emails are sent to all people who's baptism date matches the current
+    date.
+    """
     port = 465  # For SSL
     sender_email = "lifeinchrist.stm@gmail.com"
     # receiver_email = "alfredmathew718@gmail.com"
@@ -28,17 +41,8 @@ def send_email(**kwargs):
     message = MIMEMultipart()
     message['Subject'] = 'Baptism Anniversary - STM Charismatic Group'
     message['From'] = sender_email  # Enter your address
-
-
     # use getpass module here or keyring module
     password = kr.get_password('gmail','lic.stm')
-
-    # Create the plain-text and HTML version of your message
-    # text = '''\
-    # '''
-    # html_file = open('./html/1.html','rt')
-    
-
     imgno = 5 #randint(1,4)
     # edit_image(imgno,first_name,last_name)
     with open(f'../img/resources/{imgno}.png','rb') as attachment:
@@ -174,6 +178,16 @@ def send_email(**kwargs):
             break
 
 def process_person(data):
+    """process_person(data) --> takes each person in the data set and sends emails to relatives
+
+    Parameters:
+    data -- this is a pandas DataFrame that contains information about
+    the people who's baptism dates match the current date
+
+    Outcomes:
+    * send_email method is called until each person in the DataFrame has been sent
+    emails
+    """
     length = len(data.index)
     i=0
     while i < length:
@@ -188,6 +202,16 @@ def process_person(data):
         i+=1
 
 def check_dates(given_date):
+    """check_dates(given_date) --> checks if the given datetime object has the same
+    day and month as the current date
+
+    Parameters:
+    given_date -- this is a datetime object that contains at least a month and a day
+
+    Outcomes:
+    * Function returns True if the datetime object given to it matches the current 
+    month and day
+    """
     now = dt.datetime.now()
     if now.month == given_date.month and now.day == given_date.day:
         return True
@@ -200,6 +224,18 @@ def open_data():
     return data
 
 def filter_data(data):
+    """filter_data(data)
+
+    Parameters:
+    data -- pandas DataFrame that contains information about parishioners including their godparents,
+    and parents
+
+    Outcomes:
+    * goes through the DataFrame and uses check_dates method to see if the datatime object
+    of the current row matches the current date
+    * returns a pandas Series that contains boolean values and is used to filter the 
+    DataFrame
+    """
     list = []
     i = 0
     while i < data['Baptism-Date'].count():
