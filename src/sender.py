@@ -9,15 +9,16 @@ import numpy as np
 import keyring as kr
 import datetime as dt
 from random import randint
+# this was initially imported for image editing
 #from PIL import Image, ImageDraw, ImageFont
 from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-    
-def main(): 
+
+def main():
     data = open_data()
-    # data = data[filter_data(data)]
+    data = data[filter_data(data)]
     process_person(data)
 
 def send_email(**kwargs):
@@ -58,7 +59,7 @@ def send_email(**kwargs):
         '<image1>'
     )
     message.attach(part)
-    
+
     for k in kwargs:
         if k == 'child':
             continue
@@ -73,7 +74,7 @@ def send_email(**kwargs):
                             height: 20%;
                         }
                         p {
-                            font-family: 'Times New Roman', Times, serif; 
+                            font-family: 'Times New Roman', Times, serif;
                             font-size: 14pt;
                         }
                         #chpic {
@@ -87,7 +88,7 @@ def send_email(**kwargs):
                             width: 100%;
                         }
                 </style>
-            </head>\n''' 
+            </head>\n'''
             html += f'''
             <body>
                 <header>
@@ -159,7 +160,7 @@ def send_email(**kwargs):
             # Turn these into plain/html MIMEText objects
             # part1 = MIMEText(text, "plain")
             part2 = MIMEText(html, "html")
-            
+
             # Add HTML/plain-text parts to MIMEMultipart message
             # The email client will try to render the last part first
             # message.attach(part1)
@@ -182,7 +183,7 @@ def process_person(data):
 
     Parameters:
     data -- this is a pandas DataFrame that contains information about
-    the people who's baptism dates match the current date
+    the people whose baptism dates match the current date
 
     Outcomes:
     * send_email method is called until each person in the DataFrame has been sent
@@ -209,7 +210,7 @@ def check_dates(given_date):
     given_date -- this is a datetime object that contains at least a month and a day
 
     Outcomes:
-    * Function returns True if the datetime object given to it matches the current 
+    * Function returns True if the datetime object given to it matches the current
     month and day
     """
     now = dt.datetime.now()
@@ -220,6 +221,7 @@ def check_dates(given_date):
 
 def open_data():
     data = pd.read_excel('../data/sample_data.xlsx')
+    # cleans the data
     data.dropna(thresh=13)
     return data
 
@@ -233,8 +235,8 @@ def filter_data(data):
     Outcomes:
     * goes through the DataFrame and uses check_dates method to see if the datatime object
     of the current row matches the current date
-    * returns a pandas Series that contains boolean values and is used to filter the 
-    DataFrame
+    * returns a pandas Series that contains boolean values and is used to filter the
+    DataFrame for children with current baptism days
     """
     list = []
     i = 0
