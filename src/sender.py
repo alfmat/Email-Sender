@@ -46,6 +46,11 @@ def send_email(**kwargs):
         if k == 'child':
             continue
         else:
+            receiver_email = kwargs[k][1]
+            # checks if the receiver_email is null
+            if(receiver_email == np.nan):
+                continue
+
             message = MIMEMultipart()
             message['Subject'] = 'Baptism Anniversary - STM Charismatic Group'
             message['From'] = sender_email  # Enter your address
@@ -165,11 +170,6 @@ def send_email(**kwargs):
             # Add HTML/plain-text parts to MIMEMultipart message
             # The email client will try to render the last part first
             # message.attach(part1)
-            receiver_email = kwargs[k][1]
-
-            # checks if the receiver_email is null
-            if(receiver_email == np.nan):
-                continue
 
             # attaches html to the file
             message.attach(part2)
