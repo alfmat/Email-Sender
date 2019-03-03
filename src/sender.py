@@ -39,31 +39,32 @@ def send_email(**kwargs):
     sender_email = "alfredmathew718@gmail.com"
     # receiver_email = "alfredmathew718@gmail.com"
     smtp_server = "smtp.gmail.com"
-    message = MIMEMultipart()
-    message['Subject'] = 'Baptism Anniversary - STM Charismatic Group'
-    message['From'] = sender_email  # Enter your address
     # use getpass module here or keyring module
     password = kr.get_password('gmail','alfredmathew718')
-    imgno = 5 #randint(1,4)
-    # edit_image(imgno,first_name,last_name)
-    with open(f'../img/resources/{imgno}.png','rb') as attachment:
-        part = MIMEBase('application','octet-stream')
-        part.set_payload(attachment.read())
-    encoders.encode_base64(part)
-    # part.add_header(
-    #     "Content-Disposition",
-    #     "attachment; filename = BaptismAnniversary.jpg",
-    # )
-    part.add_header(
-        'Content-ID',
-        '<image1>'
-    )
-    message.attach(part)
 
     for k in kwargs:
         if k == 'child':
             continue
         else:
+            message = MIMEMultipart()
+            message['Subject'] = 'Baptism Anniversary - STM Charismatic Group'
+            message['From'] = sender_email  # Enter your address
+            imgno = 5 #randint(1,4)
+            # edit_image(imgno,first_name,last_name)
+            with open(f'../img/resources/{imgno}.png','rb') as attachment:
+                part = MIMEBase('application','octet-stream')
+                part.set_payload(attachment.read())
+            encoders.encode_base64(part)
+            # part.add_header(
+            #     "Content-Disposition",
+            #     "attachment; filename = BaptismAnniversary.jpg",
+            # )
+            part.add_header(
+                'Content-ID',
+                '<image1>'
+            )
+            message.attach(part)
+
             html='''\
             <html>
             <head>
@@ -178,8 +179,7 @@ def send_email(**kwargs):
                 message['To'] = receiver_email
                 server.sendmail(sender_email, receiver_email, message.as_string())
                 server.quit()
-            print('Message Sent to family of {}!'.format(kwargs['child']),flush=True)
-            break
+            print('Message Sent to {0} of {1}!'.format(k, kwargs["child"]),flush=True)
 
 def process_person(data):
     """process_person(data) --> takes each person in the data set and sends emails to relatives
