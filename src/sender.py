@@ -36,14 +36,14 @@ def send_email(**kwargs):
     date.
     """
     port = 465  # For SSL
-    sender_email = "lifeinchrist.stm@gmail.com"
+    sender_email = "alfredmathew718@gmail.com"
     # receiver_email = "alfredmathew718@gmail.com"
     smtp_server = "smtp.gmail.com"
     message = MIMEMultipart()
     message['Subject'] = 'Baptism Anniversary - STM Charismatic Group'
     message['From'] = sender_email  # Enter your address
     # use getpass module here or keyring module
-    password = kr.get_password('gmail','lic.stm')
+    password = kr.get_password('gmail','alfredmathew718')
     imgno = 5 #randint(1,4)
     # edit_image(imgno,first_name,last_name)
     with open(f'../img/resources/{imgno}.png','rb') as attachment:
@@ -164,10 +164,13 @@ def send_email(**kwargs):
             # Add HTML/plain-text parts to MIMEMultipart message
             # The email client will try to render the last part first
             # message.attach(part1)
-            if receiver_email == np.nan:
-                break
-            else:
-                receiver_email = kwargs[k][1]
+            receiver_email = kwargs[k][1]
+
+            # checks if the receiver_email is null
+            if(receiver_email == np.nan):
+                continue
+
+            # attaches html to the file
             message.attach(part2)
             context = ssl.create_default_context()
             with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
